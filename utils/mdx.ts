@@ -29,7 +29,7 @@ export const getAllPosts = (): Post[] =>
     })
     .sort((a, b) => (new Date(a.data.date) > new Date(b.data.date) ? -1 : 1));
 
-export const mdxSerialize = (content: string, data: { [key: string]: any }) => {
+export const mdxSerialize = (content: string, data: { [key: string]: any }) =>
   serialize(content, {
     mdxOptions: {
       remarkPlugins: [
@@ -54,4 +54,3 @@ export const mdxSerialize = (content: string, data: { [key: string]: any }) => {
     },
     scope: data,
   });
-};
