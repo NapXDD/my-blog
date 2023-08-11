@@ -1,17 +1,11 @@
-import {
-  POSTS_PATH,
-  getAllPosts,
-  mdxSerialize,
-  postFilePaths,
-} from "@/utils/mdx";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { POSTS_PATH, getAllPosts, mdxSerialize } from "@/utils/mdx";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import path from "path";
 import fs from "fs";
 import matter from "gray-matter";
 import { Post, PostData } from "@/component/blog/interace";
-import { useRouter } from "next/router";
 import NodeCache from "node-cache";
+import PostDetail from "@/component/blog/post/post";
 
 interface Props {
   slug: string;
@@ -36,55 +30,24 @@ export async function generateStaticParams() {
   }));
 }
 
-async function getData(slug: string) {
+async function getData(slug: string): Promise<Props> {
   const postFilePath = path.join(POSTS_PATH, `${slug}.mdx`);
   const source = fs.readFileSync(postFilePath);
   const { content, data } = matter(source);
-  const mdxSource = mdxSerialize(content, data);
+  const mdxSource = await mdxSerialize(content, data);
   return {
-    revalidate: CONTENT_PAGE_CACHE_TIME,
-    props: {
-      slug: slug,
-      source: mdxSource,
-      post: data,
-    },
+    slug: slug,
+    source: mdxSource,
+    post: data as PostData,
   };
 }
 
-export default function PostDetail() {
-  const router = useRouter();
-  const props = getData(router.query.slug as string);
-  return <>{/* <Post post={props.} source={props.source} /> */}</>;
+export default async function PostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const props = await getData(params.slug);
+  // return <PostDetail props={props} />;
+  return <PostDetail post={props.post} source={props.source} />;
 }
-
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//   if (params === undefined) {
-//     return { notFound: true };
-//   }
-
-//   const postFilePath = path.join(POSTS_PATH, `${params.slug}.mdx`);
-//   const source = fs.readFileSync(postFilePath);
-
-//   const { content, data } = matter(source);
-//   const mdxSource = mdxSerialize(content, data);
-
-//   return {
-//     revalidate: CONTENT_PAGE_CACHE_TIME,
-//     props: {
-//       slug: params.slug,
-//       source: mdxSource,
-//       post: data,
-//     },
-//   };
-// };
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const paths = postFilePaths
-//     .map((path) => path.replace(/\.mdx?$/, ""))
-//     .map((slug) => ({ params: { slug } }));
-
-//   return {
-//     paths,
-//     fallback: "blocking",
-//   };
-// };

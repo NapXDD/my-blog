@@ -13,6 +13,7 @@ import path from "path";
 import { Post } from "@/component/blog/interace";
 import matter from "gray-matter";
 import { serialize } from "next-mdx-remote/serialize";
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
 
 export const POSTS_PATH = path.join(process.cwd(), "app/posts");
 
@@ -29,7 +30,10 @@ export const getAllPosts = (): Post[] =>
     })
     .sort((a, b) => (new Date(a.data.date) > new Date(b.data.date) ? -1 : 1));
 
-export const mdxSerialize = (content: string, data: { [key: string]: any }) =>
+export const mdxSerialize = async (
+  content: string,
+  data: any
+): Promise<MDXRemoteSerializeResult<Record<string, unknown>>> =>
   serialize(content, {
     mdxOptions: {
       remarkPlugins: [
@@ -37,12 +41,12 @@ export const mdxSerialize = (content: string, data: { [key: string]: any }) =>
         remarkImages,
         remarkGfm,
         [remarkFootnote, { inlineNotes: true }],
-        [
-          require("remark-prism"),
-          {
-            plugins: ["line-numbers", "diff-highlight"],
-          },
-        ],
+        // [
+        //   require("remark-prism"),
+        //   {
+        //     plugins: ["line-numbers", "diff-highlight"],
+        //   },
+        // ],
       ],
       rehypePlugins: [
         rehypeKatex,

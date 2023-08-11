@@ -1,4 +1,5 @@
-import { MDXRemoteSerializeResult } from "next-mdx-remote";
+"use client";
+import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { PostData } from "../interace";
 
 interface Props {
@@ -6,6 +7,6 @@ interface Props {
   source: MDXRemoteSerializeResult<Record<string, unknown>>;
 }
 
-export default function Post(props: Props) {
-  return <>{props.post.title}</>;
+export default function PostDetail(props: Props) {
+  return <>{<MDXRemote {...props.source} />}</>;
 }

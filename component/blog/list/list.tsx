@@ -8,7 +8,7 @@ interface Props {
 export default function BlogList(props: Props): JSX.Element {
   return (
     <>
-      <div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         {props.posts.map((post, index) => (
           <Link
             key={index}
