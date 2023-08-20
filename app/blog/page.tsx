@@ -6,10 +6,6 @@ import NodeCache from "node-cache";
 const CACHE_DURATION = 60 * 60; // 1 hour
 const cache = new NodeCache({ stdTTL: CACHE_DURATION });
 
-// export default function BlogPage({ posts }: { posts: Post[] }) {
-//   return <BlogList posts={posts || []} />;
-// }
-
 export async function getData() {
   let posts = cache.get<Post[]>("posts");
   if (!posts) {
